@@ -1,7 +1,5 @@
-import decimal
 import os
 import json
-import argparse
 from datetime import datetime
 
 # A JSON file as DB to store users expenses.
@@ -26,6 +24,7 @@ def timestamp():
     formatted_date = today.strftime("%Y-%m-%d")
     return formatted_date
 
+# CRUD Operations Commands
 # Add Command
 def add_expense(description, amount):
     expense_data = load_expenses_file()
@@ -46,7 +45,6 @@ def add_expense(description, amount):
 
     save_expenses(expense_data)
     print(f"Expense added successfully (ID: {expense_id})")
-
 
 # List command
 def list_expenses():
@@ -69,3 +67,45 @@ def list_expenses():
 
         # Print the formatted row
         print(f"{id_val:<8}{date_val:15}{description_val:<20}${amount_val:.2f}")
+
+# Update Command
+def update_expense(expense_id, description=None, amount=None):
+    expense_data = load_expenses_file()
+
+    if not expense_data["expenses"]:
+        print("No expenses found! Please add your first expense.")
+        return
+
+    # Find the expense by ID
+    for expense in expense_data["expenses"]:
+        if expense["id"] == expense_id:
+            if description is not None:
+                expense["description"] = description
+            if amount is not None:
+                expense["amount"] = amount
+
+            save_expenses(expense_data)
+            print(f"Expense with ID {expense_id} updated successfully.")
+            return
+
+    print(f"Expense with ID {expense_id} not found.")
+
+
+# Delete Command
+def delete_expense(expense_id):
+    expense_data = load_expenses_file()
+
+    if not expense_data["expenses"]:
+        print("No expenses found! Please add your first expense.")
+        return
+
+    # Find the expense by ID and remove it
+    for i, expense in enumerate(expense_data["expenses"]):
+        if expense["id"] == expense_id:
+            del expense_data["expenses"][i]
+
+            save_expenses(expense_data)
+            print(f"Expense with ID {expense_id} deleted successfully.")
+            return
+
+    print(f"Expense with ID {expense_id} not found.")
