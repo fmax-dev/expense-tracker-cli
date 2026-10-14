@@ -24,7 +24,7 @@ def timestamp():
     formatted_date = today.strftime("%Y-%m-%d")
     return formatted_date
 
-# CRUD Operations Commands
+# 1. CRUD Operations Commands
 # Add Command
 def add_expense(description, amount):
     expense_data = load_expenses_file()
@@ -55,8 +55,8 @@ def list_expenses():
         return
 
     # Print the header row with defined column widths
-    print(f"{"ID":<8}{"Date":<15}{"Description":<20}{"Amount"}")
-    #print("-" * 50) # Visual separator line
+    print(f"{'ID':<8}{'Date':<15}{'Description':<20}{'Amount'}")
+    # print("-" * 50) # Visual separator line
 
     for item in expense_data["expenses"]:
         # Extract the fields safely using their keys
@@ -66,7 +66,7 @@ def list_expenses():
         amount_val = item.get("amount", 0)
 
         # Print the formatted row
-        print(f"{id_val:<8}{date_val:15}{description_val:<20}${amount_val:.2f}")
+        print(f"{id_val:<8}{date_val:<15}{description_val:<20}${amount_val:.2f}")
 
 # Update Command
 def update_expense(expense_id, description=None, amount=None):
@@ -109,3 +109,46 @@ def delete_expense(expense_id):
             return
 
     print(f"Expense with ID {expense_id} not found.")
+
+
+# 2. Summary Commands
+# Total Summary Command
+def total_expenses():
+    expense_data = load_expenses_file()
+
+    if not expense_data["expenses"]:
+        print("No expenses found! Please add your first expense.")
+        return
+
+    # Initialize the total tracker var
+    total = 0
+
+    # Loop through the expenses and sum the amounts
+    for item in expense_data["expenses"]:
+        total += item.get("amount", 0)  # Adding the sum of the amounts to the total
+
+    print(f"Total expenses: ${total:.2f}")
+
+
+# Total Summary Command by Month
+def total_expenses_by_month(month: int):
+    expense_data = load_expenses_file()
+
+    if not expense_data["expenses"]:
+        print("No expenses found! Please add your first expense.")
+        return
+
+    # Validate the month input
+    if month < 1 or month > 12:
+        print("Invalid month. Please enter a value between 1 and 12.")
+        return
+
+    # Initialize the total tracker var
+    total = 0
+
+    # Loop through the expenses and sum the amounts for the specified month
+    for item in expense_data["expenses"]:
+        expense_date = datetime.strptime(item.get("date", ""), "%Y-%m-%d")
+        if expense_date.month == month:
+            total += item.get("amount", 0)  # Adding the sum of the amounts to the total
+    print(f"Total expenses for month {month}: ${total:.2f}")

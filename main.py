@@ -1,13 +1,12 @@
 import argparse
 
 from expense_tracker import (
-    load_expenses_file,
-    save_expenses,
-    timestamp,
     add_expense,
     list_expenses,
     update_expense,
     delete_expense,
+    total_expenses,
+    total_expenses_by_month,
 )
 
 def main():
@@ -37,6 +36,10 @@ def main():
     # List command
     list_parser = subparsers.add_parser("list", help="List all expenses")
 
+    # Total expenses command
+    total_parser = subparsers.add_parser("summary", help="Show total expenses")
+    total_parser.add_argument("--month", type=int, help="Month for summary")
+
     # Parse the command-line inputs
     args = parser.parse_args()
 
@@ -48,6 +51,11 @@ def main():
         delete_expense(args.id)
     elif args.command == "list":
         list_expenses()
+    elif args.command == "summary":
+        if args.month is not None:
+            total_expenses_by_month(args.month)
+        else:
+            total_expenses()
     else:
         parser.print_help()
 
